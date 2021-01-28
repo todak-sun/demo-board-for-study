@@ -4,6 +4,7 @@ package io.todaksun.study.demoboard.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
+@Slf4j
 public class JsonWebTokenUtil {
 
     private final String VERY_SECRET_KEY = "guess";
@@ -35,7 +37,9 @@ public class JsonWebTokenUtil {
 
     public boolean isValidToken(String token, UserDetails userDetails){
         final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && isTokenExpired(token);
+        log.info("username : {}", username);
+        log.info("userDetails.getUsername() : {}", userDetails.getUsername());
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
     public String createToken(UserDetails userDetails) {

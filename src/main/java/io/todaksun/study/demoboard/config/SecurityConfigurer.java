@@ -3,6 +3,7 @@ package io.todaksun.study.demoboard.config;
 import io.todaksun.study.demoboard.filter.JsonWenTokenRequestFilter;
 import io.todaksun.study.demoboard.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;

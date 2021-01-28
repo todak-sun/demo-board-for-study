@@ -2,6 +2,7 @@ package io.todaksun.study.demoboard.filter;
 
 import io.todaksun.study.demoboard.service.MemberService;
 import io.todaksun.study.demoboard.util.JsonWebTokenUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Component
+@Slf4j
 public class JsonWenTokenRequestFilter extends OncePerRequestFilter {
 
     private final MemberService memberService;
@@ -31,17 +33,22 @@ public class JsonWenTokenRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authorization = request.getHeader("Authorization");
-
+        log.info("authorization : {}", authorization);
         if (hasAuthorization(authorization)) {
             String jsonWebToken = authorization.substring(AUTH_TYPE.length());
             String username = jsonWebTokenUtil.extractUsername(jsonWebToken);
-
+            log.info("jsonWebToken : {}", jsonWebToken);
+            log.info("username : {}", username);
             if (notAuthenticated(username)) {
+                log.info("Not Authenticated!!!");
                 UserDetails userDetails = memberService.loadUserByUsername(username);
                 if (jsonWebTokenUtil.isValidToken(jsonWebToken, userDetails)) {
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities()
                     );
+
+                    log.info("usernamePasswordAuthenticationToken : {}", usernamePasswordAuthenticationToken);
+
                     usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 }

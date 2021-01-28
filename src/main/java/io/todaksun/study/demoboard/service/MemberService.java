@@ -1,23 +1,38 @@
 package io.todaksun.study.demoboard.service;
 
+import io.todaksun.study.demoboard.domain.entities.Member;
 import io.todaksun.study.demoboard.domain.repositories.MemberRepository;
+import io.todaksun.study.demoboard.util.MemberAdapter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService implements UserDetailsService {
 
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
 
+    @Transactional
+    public Member signIn(Member member) {
+
+        if (memberRepository.findByUsername(member.getUsername()).isPresent()) {
+            throw new RuntimeException("같은 메일은 사용할 수 없다.");
+        }
+
+        member.encodePassword(passwordEncoder);
+        return memberRepository.save(member);
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) {
-        return new User("todak", passwordEncoder.encode("todak"), Collections.emptyList());
+        return memberRepository.findByUsername(username)
+                .map(MemberAdapter::new)
+                .orElseThrow(() -> new RuntimeException("유저가 없다"));
     }
 }
