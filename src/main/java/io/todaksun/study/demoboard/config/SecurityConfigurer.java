@@ -28,8 +28,10 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/auth", "/sign-in", "/docs").permitAll()
-                .anyRequest().authenticated();
+                .antMatchers("/auth", "/sign-in", "/", "/js/**", "/css/**", "/image/**")
+                    .permitAll()
+                .anyRequest()
+                    .authenticated();
 
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

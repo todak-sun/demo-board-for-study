@@ -62,7 +62,7 @@ public class BoardApiController {
 
         public BoardResponse(Board board) {
             this.id = board.getId();
-            this.title = board.getContent();
+            this.title = board.getTitle();
             this.content = board.getContent();
             this.writtenAt = board.getCreatedDateTime();
             this.updatedAt = board.getUpdatedDateTime();
