@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.todaksun.study.demoboard.util.LocalDateTimeStringSerializer;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
@@ -24,7 +23,7 @@ public class ResponseTemplate<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Pageable pagination;
 
-    private ResponseTemplate(){
+    private ResponseTemplate() {
         this.transactionTime = LocalDateTime.now();
     }
 
@@ -39,7 +38,7 @@ public class ResponseTemplate<T> {
         this.transactionTime = LocalDateTime.now();
     }
 
-    public static ResponseTemplate create(){
+    public static ResponseTemplate create() {
         return new ResponseTemplate();
     }
 

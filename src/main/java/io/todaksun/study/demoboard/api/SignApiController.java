@@ -1,7 +1,7 @@
 package io.todaksun.study.demoboard.api;
 
 import io.todaksun.study.demoboard.domain.entities.Member;
-import io.todaksun.study.demoboard.domain.repositories.MemberRepository;
+import io.todaksun.study.demoboard.exeption.InvalidException;
 import io.todaksun.study.demoboard.networks.MemberResponse;
 import io.todaksun.study.demoboard.networks.RequestDto;
 import io.todaksun.study.demoboard.networks.ResponseTemplate;
@@ -28,16 +28,17 @@ public class SignApiController {
 
     private final MemberService memberService;
 
-    private final MemberRepository memberRepository;
-
     @PostMapping
     public ResponseEntity<?> enroll(@Valid @RequestBody final MemberSignRequest request,
                                     Errors errors) {
         if (errors.hasErrors())
-            throw new RuntimeException("뭔가 문제가 있다");
+            throw new InvalidException(errors);
 
-        if (request.isValid())
-            throw new RuntimeException("너도 그렇다.");
+        if (request.isValid()) {
+            errors.rejectValue("", "403", "아이디 또는 비밀번호가 일치하지 않습니다.");
+            throw new InvalidException(errors);
+        }
+
 
         Member newMember = memberService.signIn(request.toEntity());
 

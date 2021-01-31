@@ -1,5 +1,6 @@
 package io.todaksun.study.demoboard.auth;
 
+import io.todaksun.study.demoboard.exeption.SignInFailException;
 import io.todaksun.study.demoboard.service.MemberService;
 import io.todaksun.study.demoboard.util.JsonWebTokenUtil;
 import lombok.Getter;
@@ -26,7 +27,7 @@ public class AuthApiController {
     private final JsonWebTokenUtil jsonWebTokenUtil;
 
     @PostMapping
-    public ResponseEntity<?> createAuthToken(@RequestBody AuthRequest req) throws Exception {
+    public ResponseEntity<?> createAuthToken(@RequestBody AuthRequest req) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -34,7 +35,7 @@ public class AuthApiController {
                     )
             );
         } catch (BadCredentialsException exception) {
-            throw new Exception("아이디 또는 비밀번호가 틀리다", exception);
+            throw new SignInFailException();
         }
 
         final UserDetails userDetails = memberService.loadUserByUsername(req.getUsername());

@@ -2,6 +2,7 @@ package io.todaksun.study.demoboard.service;
 
 import io.todaksun.study.demoboard.domain.entities.Member;
 import io.todaksun.study.demoboard.domain.repositories.MemberRepository;
+import io.todaksun.study.demoboard.exeption.DuplicateException;
 import io.todaksun.study.demoboard.util.MemberAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +23,7 @@ public class MemberService implements UserDetailsService {
     public Member signIn(Member member) {
 
         if (memberRepository.findByUsername(member.getUsername()).isPresent()) {
-            throw new RuntimeException("같은 메일은 사용할 수 없다.");
+            throw new DuplicateException(member.getUsername());
         }
 
         member.encodePassword(passwordEncoder);

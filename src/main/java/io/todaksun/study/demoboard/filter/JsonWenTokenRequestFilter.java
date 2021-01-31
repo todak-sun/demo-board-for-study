@@ -59,11 +59,13 @@ public class JsonWenTokenRequestFilter extends OncePerRequestFilter {
     }
 
     private boolean notAuthenticated(String username) {
+        log.info("SecurityContextHolder.getContext().getAuthentication() : {}", SecurityContextHolder.getContext().getAuthentication());
         return Optional.ofNullable(username).isPresent()
                 && Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication()).isEmpty();
     }
 
     private boolean hasAuthorization(String authorization) {
+
         return Optional.ofNullable(authorization).isPresent()
                 && authorization.startsWith(AUTH_TYPE);
     }

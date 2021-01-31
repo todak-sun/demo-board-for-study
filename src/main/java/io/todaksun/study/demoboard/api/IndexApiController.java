@@ -22,7 +22,6 @@ public class IndexApiController {
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal()
         );
 
-
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ResponseTemplate.create().message("Hello World~!"));
 
