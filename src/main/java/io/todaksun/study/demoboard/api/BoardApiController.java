@@ -1,5 +1,6 @@
 package io.todaksun.study.demoboard.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.todaksun.study.demoboard.auth.WhoAmI;
 import io.todaksun.study.demoboard.domain.entities.Board;
@@ -45,7 +46,7 @@ public class BoardApiController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ResponseTemplate.create(new BoardResponse(newBoard)));
+                .body(ResponseTemplate.create(new BoardResponse(newBoard, member)));
     }
 
     @Getter
@@ -60,6 +61,9 @@ public class BoardApiController {
         private LocalDateTime updatedAt;
         private String writtenBy;
 
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private Boolean mine;
+
         public BoardResponse(Board board) {
             this.id = board.getId();
             this.title = board.getTitle();
@@ -67,6 +71,15 @@ public class BoardApiController {
             this.writtenAt = board.getCreatedDateTime();
             this.updatedAt = board.getUpdatedDateTime();
             this.writtenBy = board.getWriter().getUsername();
+        }
+
+        public BoardResponse(Board board, Member member) {
+            this(board);
+            if (member != null) {
+                this.mine = member.getUsername().equals(board.getWriter().getUsername());
+            } else {
+                this.mine = false;
+            }
         }
     }
 
@@ -91,13 +104,12 @@ public class BoardApiController {
 
 
     @GetMapping("/{bookId}")
-    private ResponseEntity<?> read(@PathVariable Long bookId) {
+    private ResponseEntity<?> read(@PathVariable Long bookId, @WhoAmI Member member) {
 
         Board board = boardService.read(bookId);
-
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ResponseTemplate
-                        .create(new BoardResponse(board)));
+                        .create(new BoardResponse(board, member)));
     }
 
     @GetMapping
@@ -116,7 +128,7 @@ public class BoardApiController {
                         boards.getPageable()));
     }
 
-    @PatchMapping("/{bookId}")
+    @PutMapping("/{bookId}")
     public ResponseEntity<?> update(@PathVariable Long bookId,
                                     @Valid @RequestBody BoardUpdateRequest request,
                                     Errors errors) {

@@ -1,11 +1,11 @@
 package io.todaksun.study.demoboard.auth;
 
 import io.todaksun.study.demoboard.exeption.SignInFailException;
+import io.todaksun.study.demoboard.networks.ResponseTemplate;
 import io.todaksun.study.demoboard.service.MemberService;
 import io.todaksun.study.demoboard.util.JsonWebTokenUtil;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthApiController {
 
     private final AuthenticationManager authenticationManager;
@@ -38,18 +39,13 @@ public class AuthApiController {
             throw new SignInFailException();
         }
 
-        final UserDetails userDetails = memberService.loadUserByUsername(req.getUsername());
-        final String token = jsonWebTokenUtil.createToken(userDetails);
+        UserDetails userDetails = memberService.loadUserByUsername(req.getUsername());
+        String token = jsonWebTokenUtil.createToken(userDetails);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new AuthResponse(token));
+                .body(ResponseTemplate.create(token));
     }
 
-    @RequiredArgsConstructor
-    static class AuthResponse {
-        @Getter
-        private final String token;
-    }
 
     @Getter
     @Setter

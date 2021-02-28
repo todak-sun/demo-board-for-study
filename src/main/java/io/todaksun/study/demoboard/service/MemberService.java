@@ -3,6 +3,7 @@ package io.todaksun.study.demoboard.service;
 import io.todaksun.study.demoboard.domain.entities.Member;
 import io.todaksun.study.demoboard.domain.repositories.MemberRepository;
 import io.todaksun.study.demoboard.exeption.DuplicateException;
+import io.todaksun.study.demoboard.exeption.NotFoundException;
 import io.todaksun.study.demoboard.util.MemberAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,6 +35,6 @@ public class MemberService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         return memberRepository.findByUsername(username)
                 .map(MemberAdapter::new)
-                .orElseThrow(() -> new RuntimeException("유저가 없다"));
+                .orElseThrow(() -> new NotFoundException(0L));
     }
 }
